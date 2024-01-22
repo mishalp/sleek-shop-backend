@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 const shopSchema = new mongoose.Schema({
     name: {
         required: [true, "Please enter your shop name!"],
-        type: String
+        type: String,
     },
     phone: {
         required: [true, "Please enter your phone!"],
@@ -13,7 +13,8 @@ const shopSchema = new mongoose.Schema({
     },
     email: {
         required: [true, "Please enter your email!"],
-        type: String
+        type: String,
+        unique: true,
     },
     address: {
         required: [true, "Please enter your address!"],
@@ -38,7 +39,7 @@ const shopSchema = new mongoose.Schema({
             required: true,
         },
     },
-})
+}, { timestamps: true })
 
 // Hash password
 shopSchema.pre("save", async function (next) {

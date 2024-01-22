@@ -1,6 +1,6 @@
 import Shop from '../models/shop.js'
 import joi from 'joi'
-import { createActivationToken, getImageData } from '../utils/utils.js'
+import { createActivationToken } from '../utils/utils.js'
 import cloudinary from 'cloudinary'
 import sendMail from '../utils/sendMail.js'
 import jwt from 'jsonwebtoken'
@@ -18,11 +18,10 @@ export const registerShop = async (req, res, next) => {
     })
     try {
         const data = await schema.validateAsync(req.body)
-
         const { email, avatar, name, phone, address, zip, password } = data;
         const isEmail = await Shop.findOne({ email: email })
 
-        if (isEmail) next({ statusCode: 400, message: "User already exists" })
+        if (isEmail) return next({ statusCode: 400, message: "User with this email already exists" })
 
         // const image = await getImageData(avatar)
         const myCloud = await cloudinary.v2.uploader.upload(avatar, {
@@ -55,7 +54,7 @@ export const registerShop = async (req, res, next) => {
         });
 
     } catch (error) {
-        console.log(error);
+        console.log(error + "hi");
         next(error)
     }
 }
@@ -69,12 +68,12 @@ export const activateShop = async (req, res, next) => {
             process.env.ACTIVATION_SECRET
         );
 
-        if (!newSeller) next({ statusCode: 400, message: "Invalid Token" })
+        if (!newSeller) return next({ statusCode: 400, message: "Invalid Token" })
 
         const { name, email, phone, address, zip, password, avatar } = newSeller;
 
         let seller = await Shop.findOne({ email: email });
-        if (seller) next({ statusCode: 400, message: "Email already exists" })
+        if (seller) return next({ statusCode: 400, message: "Email already exists" })
 
         seller = await Shop.create({
             name,
@@ -89,6 +88,40 @@ export const activateShop = async (req, res, next) => {
         sendShopToken(seller, 201, res)
 
     } catch (error) {
-        new (error)
+        next(error)
     }
+}
+
+export const loginShop = async (req, res, next) => {
+    const schema = joi.object({
+        email: joi.string().email().required(),
+        password: joi.string().min(6).required(),
+    })
+
+    try {
+        const data = await schema.validateAsync(req.body)
+        const { email, password } = data;
+
+        const seller = await Shop.findOne({ email })
+        if (!seller) return next({ statusCode: 400, message: "User with this email not found" })
+
+        const isPasswordCorrect = await seller.comparePassword(password)
+        if (!isPasswordCorrect) return next({ statusCode: 400, message: "Incorrect password" })
+
+        sendShopToken(seller, 201, res)
+
+    } catch (error) {
+        console.log(error);
+        next(error)
+    }
+}
+
+export const verifySeller = (req, res) => {
+    const { seller_token } = req.cookies
+    const seller = req.seller
+    res.status(200).json({
+        success: true,
+        user: seller,
+        token: seller_token
+    })
 }
