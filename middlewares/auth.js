@@ -3,10 +3,10 @@ import { errorHandler } from "../utils/utils.js";
 import Shop from "../models/shop.js";
 
 export const isSeller = async (req, res, next) => {
-    const { seller_token } = req.cookies;
-    if (!seller_token) return errorHandler({ statusCode: 401, message: "Please login to continue" }, res)
+    const { sleek_seller_token } = req.cookies;
+    if (!sleek_seller_token) return errorHandler({ statusCode: 401, message: "Please login to continue" }, res)
 
-    jwt.verify(seller_token, process.env.JWT_SECRET_KEY, async (error, authData) => {
+    jwt.verify(sleek_seller_token, process.env.JWT_SECRET_KEY, async (error, authData) => {
         try {
             if (error) return errorHandler(error, res)
             const seller = await Shop.findById(authData.id)

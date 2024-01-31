@@ -54,7 +54,6 @@ export const registerShop = async (req, res, next) => {
         });
 
     } catch (error) {
-        console.log(error + "hi");
         next(error)
     }
 }
@@ -117,11 +116,11 @@ export const loginShop = async (req, res, next) => {
 }
 
 export const verifySeller = (req, res) => {
-    const { seller_token } = req.cookies
+    const { sleek_seller_token } = req.cookies
     const seller = req.seller
     res.status(200).json({
         success: true,
         user: seller,
-        token: seller_token
+        token: sleek_seller_token
     })
 }
