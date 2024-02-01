@@ -3,6 +3,7 @@ import cloudinary from 'cloudinary'
 import Product from "../models/product.js"
 
 export const createProduct = async (req, res, next) => {
+    if (!req.seller) return next({ statusCode: 400, message: "Seller Error" })
     const schema = joi.object({
         name: joi.string().required(),
         description: joi.string().required(),
@@ -45,4 +46,17 @@ export const createProduct = async (req, res, next) => {
     } catch (error) {
         next(error)
     }
+}
+
+export const getAllProducts = async (req, res, next) => {
+    try {
+        const products = await Product.find()
+        res.status(200).json({
+            success: true,
+            products
+        })
+    } catch (error) {
+        next(error)
+    }
+
 }

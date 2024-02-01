@@ -115,9 +115,10 @@ export const loginShop = async (req, res, next) => {
     }
 }
 
-export const verifySeller = (req, res) => {
+export const verifySeller = (req, res, next) => {
     const { sleek_seller_token } = req.cookies
     const seller = req.seller
+    if (!seller) return next({ statusCode: 400, message: "Seller Error" })
     res.status(200).json({
         success: true,
         user: seller,
