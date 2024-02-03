@@ -21,6 +21,7 @@ export const createProduct = async (req, res, next) => {
             try {
                 const result = await cloudinary.v2.uploader.upload(data.images[i], {
                     folder: "products",
+                    timeout: 120000
                 });
                 imageLinks.push({
                     public_id: result.public_id,
@@ -32,8 +33,7 @@ export const createProduct = async (req, res, next) => {
         }
 
         data.images = imageLinks
-        data.shop = req.seller
-        data.shopId = req.seller._id
+        data.shop = req.seller._id
 
         const product = await Product.create(data)
 
@@ -50,7 +50,7 @@ export const createProduct = async (req, res, next) => {
 
 export const getAllProducts = async (req, res, next) => {
     try {
-        const products = await Product.find()
+        const products = await Product.find().populate("shop")
         res.status(200).json({
             success: true,
             products
@@ -59,4 +59,21 @@ export const getAllProducts = async (req, res, next) => {
         next(error)
     }
 
+}
+
+export const getShopProducts = async (req, res, next) => {
+    const sellerId = req.params.id
+    if (!sellerId) return next({ statusCode: 400, message: "Seller Error" })
+
+    try {
+        const products = await Product.find({ shop: sellerId }).populate("shop")
+
+        res.status(200).json({
+            success: true,
+            products
+        })
+
+    } catch (error) {
+        next(error)
+    }
 }
