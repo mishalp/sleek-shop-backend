@@ -77,3 +77,19 @@ export const getShopProducts = async (req, res, next) => {
         next(error)
     }
 }
+
+export const deleteProduct = async (req, res, next) => {
+    const sellerId = req.seller._id
+    if (!sellerId) return next({ statusCode: 400, message: "Seller Error" })
+    const productId = req.params.id
+    try {
+        const product = await Product.findOneAndDelete({ shop: sellerId, _id: productId })
+        await cloudinary.v2.api.delete_resources(product.images.map(item => item.public_id))
+        res.status(200).json({
+            success: true,
+            message: "Product Successfully deleted"
+        })
+    } catch (error) {
+        next(error)
+    }
+}
