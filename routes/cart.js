@@ -1,6 +1,6 @@
 import express from 'express'
 import { isUser } from '../middlewares/auth.js'
-import { addToCart, getCart, removeFromCart, setCart } from '../controllers/cart.js'
+import { addToCart, decrementCount, getCart, incrementCount, removeFromCart, setCart } from '../controllers/cart.js'
 const router = express.Router()
 
 //setCart
@@ -14,5 +14,11 @@ router.patch('/remove', isUser, removeFromCart)
 
 //get cart
 router.get('/get', isUser, getCart)
+
+//Increment count
+router.patch('/increment', isUser, incrementCount)
+
+//Decrement count
+router.patch('/decrement', isUser, decrementCount)
 
 export default router

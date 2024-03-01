@@ -8,14 +8,6 @@ import cloudinary from 'cloudinary'
 import cookieParser from 'cookie-parser';
 import cors from 'cors'
 
-//Databse connection
-mongoose.set('strictQuery', true)
-mongoose.connect(process.env.MONGO).then(() => {
-    console.log('db connected');
-}).catch((error) => {
-    console.log(error);
-})
-
 //cloudinary connection
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_NAME,
@@ -54,6 +46,13 @@ app.use((err, req, res, next) => {
     })
 })
 
-app.listen(process.env.PORT, () => {
-    console.log("Serever is started at port " + process.env.PORT);
+//Databse connection
+mongoose.set('strictQuery', true)
+mongoose.connect(process.env.MONGO).then(() => {
+    console.log('db connected');
+    app.listen(process.env.PORT, () => {
+        console.log("Serever is started at port " + process.env.PORT);
+    })
+}).catch((error) => {
+    console.log(error);
 })
