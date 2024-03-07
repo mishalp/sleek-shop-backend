@@ -3,6 +3,8 @@ import productRoute from './routes/product.js'
 import shopRoute from './routes/shop.js'
 import userRoute from './routes/user.js'
 import cartRoute from './routes/cart.js'
+import paymentRoute from './routes/payment.js'
+import orderRoute from './routes/order.js'
 import mongoose from 'mongoose';
 import cloudinary from 'cloudinary'
 import cookieParser from 'cookie-parser';
@@ -32,6 +34,8 @@ app.use('/product', productRoute)
 app.use('/shop', shopRoute)
 app.use('/user', userRoute)
 app.use('/cart', cartRoute)
+app.use('/payment', paymentRoute)
+app.use('/order', orderRoute)
 
 
 //error handler
