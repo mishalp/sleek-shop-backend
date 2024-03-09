@@ -1,5 +1,5 @@
 // create token and saving that in cookies
-const sendShopToken = (user, statusCode, res, cart) => {
+const sendToken = (user, statusCode, res, cart) => {
     const token = user.getJwtToken();
 
     // Options for cookies
@@ -10,11 +10,11 @@ const sendShopToken = (user, statusCode, res, cart) => {
         secure: true
     };
 
-    res.status(statusCode).cookie("sleek_token", token, options).json({
+    res.status(statusCode).json({
         success: true,
         user: { ...user, cart },
         token,
     });
 };
 
-export default sendShopToken
+export default sendToken

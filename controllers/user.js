@@ -105,15 +105,7 @@ export const loginUser = async (req, res, next) => {
 
         const token = user.getJwtToken();
 
-        // Options for cookies
-        const options = {
-            expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-            httpOnly: true,
-            sameSite: "none",
-            secure: true
-        };
-
-        res.status(201).cookie("sleek_token", token, options).json({
+        res.status(201).json({
             success: true,
             user,
             cart: cart.items,
@@ -128,10 +120,8 @@ export const loginUser = async (req, res, next) => {
 
 export const verifyUser = (req, res, next) => {
     const user = req.user
-    const { sleek_token } = req.cookies
     res.status(200).json({
         success: true,
-        user: user,
-        token: sleek_token
+        user: user
     })
 }

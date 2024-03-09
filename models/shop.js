@@ -29,6 +29,10 @@ const shopSchema = new mongoose.Schema({
         type: String,
         minLength: [6, "Password must be at least 6 characters"]
     },
+    availableBalance: {
+        type: Number,
+        default: 0,
+    },
     avatar: {
         public_id: {
             type: String,
