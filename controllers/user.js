@@ -125,3 +125,71 @@ export const verifyUser = (req, res, next) => {
         user: user
     })
 }
+
+export const changePassword = async (req, res, next) => {
+    const user = req.user
+    const schema = joi.object({
+        password: joi.string().min(6).required(),
+        newPassword: joi.string().min(6).required()
+    })
+    try {
+        const data = await schema.validateAsync(req.body)
+        const { newPassword, password } = data;
+
+        const isPasswordCorrect = await user.comparePassword(password)
+        if (!isPasswordCorrect) return next({ statusCode: 400, message: "Incorrect password" })
+
+        if (password === newPassword) return next({ statusCode: 400, message: "Use new different password" })
+
+        user.password = newPassword
+        await user.save()
+
+        return res.status(200).json({
+            success: true,
+            message: "Password updated"
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const updateUser = async (req, res, next) => {
+    const user = req.user;
+    const schema = joi.object({
+        name: joi.string().min(2).max(20).required(),
+        password: joi.string().min(6).required(),
+        avatar: joi.any().required()
+    })
+
+    try {
+        const data = await schema.validateAsync(req.body)
+        const { name, password, avatar } = data
+
+        const isPasswordCorrect = await user.comparePassword(password)
+        if (!isPasswordCorrect) return next({ statusCode: 400, message: "Incorrect password" })
+
+        let flag = false
+        if (user.name !== name) {
+            user.name = name;
+            flag = true
+        }
+        if (user.avatar.url !== avatar) {
+            await cloudinary.v2.api.delete_resources([user.avatar.public_id], { timeout: 120000 })
+            const myCloud = await cloudinary.v2.uploader.upload(avatar, {
+                folder: "avatars",
+            });
+            user.avatar.public_id = myCloud.public_id
+            user.avatar.url = myCloud.secure_url
+            flag = true
+        }
+        if (flag) await user.save()
+
+        res.status(201).json({
+            success: true,
+            message: "User updated"
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
