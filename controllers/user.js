@@ -193,3 +193,17 @@ export const updateUser = async (req, res, next) => {
         next(error)
     }
 }
+
+export const addAddress = async (req, res, next) => {
+    const user = req.user
+    try {
+        user.addresses = [...user.addresses, req.body.address]
+        await user.save()
+        res.status(201).json({
+            success: true,
+            message: "Address updated"
+        })
+    } catch (error) {
+        next(error)
+    }
+}

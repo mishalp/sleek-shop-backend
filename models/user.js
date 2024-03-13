@@ -21,24 +21,25 @@ const userSchema = new mongoose.Schema({
     },
     addresses: [
         {
+            fullname: {
+                type: String,
+            },
+            phone: {
+                type: String,
+            },
             country: {
                 type: String,
             },
-            city: {
+            state: {
                 type: String,
             },
-            address1: {
-                type: String,
-            },
-            address2: {
+            address: {
                 type: String,
             },
             zipCode: {
                 type: Number,
             },
-            addressType: {
-                type: String,
-            },
+
         }
     ],
     role: {

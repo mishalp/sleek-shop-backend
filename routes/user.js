@@ -1,5 +1,5 @@
 import express from 'express'
-import { activateUser, changePassword, loginUser, registerUser, updateUser, verifyUser } from '../controllers/user.js'
+import { activateUser, addAddress, changePassword, loginUser, registerUser, updateUser, verifyUser } from '../controllers/user.js'
 import { isUser } from '../middlewares/auth.js'
 const router = express.Router()
 
@@ -20,5 +20,8 @@ router.patch('/change-password', isUser, changePassword)
 
 //update user
 router.patch('/update', isUser, updateUser)
+
+//update address
+router.post('/add-address', isUser, addAddress)
 
 export default router

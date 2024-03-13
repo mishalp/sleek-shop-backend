@@ -50,7 +50,7 @@ export const createProduct = async (req, res, next) => {
 
 export const getAllProducts = async (req, res, next) => {
     try {
-        const products = await Product.find().populate("shop")
+        const products = await Product.find().populate("shop").populate("shop")
         res.status(200).json({
             success: true,
             products
