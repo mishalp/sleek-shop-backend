@@ -48,7 +48,7 @@ export const getAllSellerOrder = async (req, res, next) => {
     try {
         const seller = req.seller
         if (!seller) return next({ statusCode: 400, message: "Seller Error" })
-        const orders = await Order.find({ "cart.shop._id": seller._id.valueOf() }).sort({
+        const orders = await Order.find({ "cart.shop": seller._id.valueOf() }).sort({
             createdAt: -1,
         })
         res.status(200).json({

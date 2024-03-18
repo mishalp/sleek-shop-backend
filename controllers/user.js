@@ -99,7 +99,7 @@ export const loginUser = async (req, res, next) => {
         const isPasswordCorrect = await user.comparePassword(password)
         if (!isPasswordCorrect) return next({ statusCode: 400, message: "Incorrect password" })
 
-        const cart = await Cart.findOne({ id: user._id })
+        const cart = await Cart.findOne({ id: user._id }).populate("items.item")
 
         // sendToken(user, 201, res, cart)
 
