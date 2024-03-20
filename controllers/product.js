@@ -1,6 +1,7 @@
 import joi from "joi"
 import cloudinary from 'cloudinary'
 import Product from "../models/product.js"
+import Order from "../models/order.js"
 
 export const createProduct = async (req, res, next) => {
     if (!req.seller) return next({ statusCode: 400, message: "Seller Error" })
@@ -50,7 +51,7 @@ export const createProduct = async (req, res, next) => {
 
 export const getAllProducts = async (req, res, next) => {
     try {
-        const products = await Product.find().populate("shop").populate("shop")
+        const products = await Product.find().populate("shop reviews.user")
         res.status(200).json({
             success: true,
             products
@@ -183,5 +184,54 @@ export const editProduct = async (req, res, next) => {
     } catch (error) {
         console.log(error);
         return next(error);
+    }
+}
+
+export const addReview = async (req, res, next) => {
+    const user = req.user
+    try {
+        const { rating, comment, prodId, orderId } = req.body
+        const product = await Product.findById(prodId)
+
+        const isReviewed = product.reviews.find(item => user._id === item.user)
+        if (isReviewed) {
+            product.reviews.forEach(item => {
+                if (item.user === user._id) {
+                    item.rating = rating
+                    item.comment = comment
+                }
+            })
+        } else {
+            product.reviews.push({
+                user: user._id,
+                rating,
+                comment,
+                productId: prodId
+            })
+        }
+
+        let avg = 0;
+
+        product.reviews.forEach((rev) => {
+            avg += rev.rating;
+        });
+
+        product.ratings = avg / product.reviews.length;
+
+        await product.save()
+
+        await Order.findByIdAndUpdate(
+            orderId,
+            { $set: { "cart.$[elem].isReviewed": true } },
+            { arrayFilters: [{ "elem._id": prodId }], new: true }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: "Reviwed succesfully!",
+        });
+
+    } catch (error) {
+        next(error)
     }
 }

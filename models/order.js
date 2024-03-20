@@ -39,6 +39,9 @@ const orderSchema = new mongoose.Schema({
     deliveredAt: {
         type: Date,
     },
+    isReviewd: {
+        type: Boolean,
+    },
     createdAt: {
         type: Date,
         default: Date.now(),

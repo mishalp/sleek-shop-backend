@@ -1,12 +1,13 @@
 import express from 'express'
 import {
+    addReview,
     createProduct,
     deleteProduct,
     editProduct,
     getAllProducts,
     getShopProducts
 } from '../controllers/product.js'
-import { isSeller } from '../middlewares/auth.js'
+import { isSeller, isUser } from '../middlewares/auth.js'
 
 const router = express.Router()
 
@@ -24,5 +25,8 @@ router.delete("/delete/:id", isSeller, deleteProduct)
 
 //edit product
 router.patch("/edit/:id", isSeller, editProduct)
+
+//review product
+router.patch("/add-review", isUser, addReview)
 
 export default router
