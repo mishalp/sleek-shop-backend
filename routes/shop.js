@@ -1,5 +1,5 @@
 import express from 'express'
-import { activateShop, loginShop, registerShop, verifySeller } from '../controllers/shop.js'
+import { activateShop, getShopInfo, loginShop, registerShop, verifySeller } from '../controllers/shop.js'
 import { isSeller } from '../middlewares/auth.js'
 const router = express.Router()
 
@@ -14,5 +14,7 @@ router.post('/login', loginShop)
 
 //verify seller
 router.get('/verify', isSeller, verifySeller)
+
+router.get('/get-shop/:id', getShopInfo)
 
 export default router

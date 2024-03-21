@@ -125,3 +125,16 @@ export const verifySeller = (req, res, next) => {
         token: sleek_seller_token
     })
 }
+
+export const getShopInfo = async (req, res, next) => {
+    try {
+        const { id } = req.params
+        const shop = await Shop.findById(id).select("name phone email address zip avatar")
+        res.status(200).json({
+            success: true,
+            shop
+        })
+    } catch (error) {
+        next(error)
+    }
+}
